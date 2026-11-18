@@ -42,16 +42,13 @@ export const updateProduct = (id, productData) => api.put(`/products/${id}`, pro
 export const deleteProduct = (id) => api.delete(`/products/${id}`);
 
 // --- Quick Stock Movement ---
-export const adjustStock = (id, quantityChanged, reason) => {
+export const adjustStock = (id, quantityChanged) => {
   return api.post(`/products/${id}/stock`, {
     quantityChanged: Number(quantityChanged),
-    reason: reason || (Number(quantityChanged) > 0 ? 'Stock replenishment' : 'Stock dispatch'),
   });
 };
 
-// --- Categories & Transactions ---
+// --- Categories ---
 export const getCategories = () => api.get('/products/categories');
-
-export const getRecentTransactions = () => api.get('/transactions');
 
 export default api;

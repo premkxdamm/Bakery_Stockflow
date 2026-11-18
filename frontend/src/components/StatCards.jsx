@@ -12,7 +12,7 @@ export default function StatCards({ stats, onFilterStatus }) {
 
   return (
     <div className="stat-grid">
-      {/* Total Products */}
+      {/* TotalProducts */}
       <div className="stat-card" onClick={() => onFilterStatus('ALL')}>
         <div className="stat-icon-wrapper bg-blue">
           <Package size={22} color="#0284c7" />
@@ -24,7 +24,7 @@ export default function StatCards({ stats, onFilterStatus }) {
         </div>
       </div>
 
-      {/* Total Stock Units */}
+      {/* TotalStockUnits */}
       <div className="stat-card">
         <div className="stat-icon-wrapper bg-indigo">
           <Boxes size={22} color="#0d9488" />
@@ -36,7 +36,7 @@ export default function StatCards({ stats, onFilterStatus }) {
         </div>
       </div>
 
-      {/* Total Inventory Value */}
+      {/* TotalInventoryValue */}
       <div className="stat-card">
         <div className="stat-icon-wrapper bg-emerald">
           <IndianRupee size={22} color="#16a34a" />
@@ -48,7 +48,7 @@ export default function StatCards({ stats, onFilterStatus }) {
         </div>
       </div>
 
-      {/* Low Stock Alert */}
+      {/* LowStockAlert */}
       <div 
         className={`stat-card cursor-pointer ${lowStockCount > 0 ? 'border-amber' : ''}`}
         onClick={() => onFilterStatus('LOW_STOCK')}
@@ -64,7 +64,7 @@ export default function StatCards({ stats, onFilterStatus }) {
         </div>
       </div>
 
-      {/* Out of Stock */}
+      {/* OutofStock */}
       <div 
         className={`stat-card cursor-pointer ${outOfStockCount > 0 ? 'border-rose' : ''}`}
         onClick={() => onFilterStatus('OUT_OF_STOCK')}

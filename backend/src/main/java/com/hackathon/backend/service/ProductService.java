@@ -2,9 +2,7 @@ package com.hackathon.backend.service;
 
 import com.hackathon.backend.dto.DashboardStats;
 import com.hackathon.backend.dto.StockUpdateRequest;
-import com.hackathon.backend.model.InventoryTransaction;
 import com.hackathon.backend.model.Product;
-import com.hackathon.backend.repository.InventoryTransactionRepository;
 import com.hackathon.backend.repository.ProductRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,21 +13,15 @@ import java.util.List;
 public class ProductService {
 
     private final ProductRepository productRepository;
-    private final InventoryTransactionRepository transactionRepository;
 
-    public ProductService(ProductRepository productRepository, InventoryTransactionRepository transactionRepository) {
+    public ProductService(ProductRepository productRepository) {
         this.productRepository = productRepository;
-        this.transactionRepository = transactionRepository;
     }
 
     public List<Product> getAllProducts(String search, String category, String status) {
         String cleanSearch = (search != null && !search.trim().isEmpty()) ? search.trim() : null;
-        String cleanCategory = (category != null && !category.trim().isEmpty() && !category.equalsIgnoreCase("ALL"))
-                ? category.trim()
-                : null;
-        String cleanStatus = (status != null && !status.trim().isEmpty() && !status.equalsIgnoreCase("ALL"))
-                ? status.trim().toUpperCase()
-                : null;
+        String cleanCategory = (category != null && !category.trim().isEmpty() && !category.equalsIgnoreCase("ALL")) ? category.trim() : null;
+        String cleanStatus = (status != null && !status.trim().isEmpty() && !status.equalsIgnoreCase("ALL")) ? status.trim().toUpperCase() : null;
 
         return productRepository.searchAndFilter(cleanSearch, cleanCategory, cleanStatus);
     }
@@ -45,17 +37,7 @@ public class ProductService {
             throw new IllegalArgumentException("SKU already exists: " + product.getSku());
         }
         product.updateStatus();
-        Product saved = productRepository.save(product);
-
-        // Record initial stock transaction
-        InventoryTransaction tx = new InventoryTransaction(
-                saved.getName(),
-                saved.getQuantity(),
-                0,
-                saved.getQuantity());
-        transactionRepository.save(tx);
-
-        return saved;
+        return productRepository.save(product);
     }
 
     @Transactional
@@ -70,22 +52,10 @@ public class ProductService {
         existing.setSku(details.getSku());
         existing.setCategory(details.getCategory());
         existing.setPrice(details.getPrice());
+        existing.setQuantity(details.getQuantity());
         existing.setDescription(details.getDescription());
-
-        if (!existing.getQuantity().equals(details.getQuantity())) {
-            int previousQty = existing.getQuantity();
-            int newQty = details.getQuantity();
-            existing.setQuantity(newQty);
-
-            InventoryTransaction tx = new InventoryTransaction(
-                    existing.getName(),
-                    newQty - previousQty,
-                    previousQty,
-                    newQty);
-            transactionRepository.save(tx);
-        }
-
         existing.updateStatus();
+
         return productRepository.save(existing);
     }
 
@@ -99,39 +69,27 @@ public class ProductService {
     public Product adjustStock(Long id, StockUpdateRequest request) {
         Product product = getProductById(id);
         int change = (request.getQuantityChanged() != null) ? request.getQuantityChanged() : 0;
-        int previousQty = product.getQuantity();
-        int newQty = previousQty + change;
+        int newQty = product.getQuantity() + change;
 
         if (newQty < 0) {
-            throw new IllegalArgumentException("Cannot reduce stock below 0. Current shelf stock is " + previousQty);
+            throw new IllegalArgumentException("Cannot reduce stock below 0. Current shelf stock is " + product.getQuantity());
         }
 
         product.setQuantity(newQty);
         product.updateStatus();
-        Product saved = productRepository.save(product);
-
-        InventoryTransaction tx = new InventoryTransaction(
-                saved.getName(),
-                change,
-                previousQty,
-                newQty);
-        transactionRepository.save(tx);
-
-        return saved;
+        return productRepository.save(product);
     }
 
     public DashboardStats getDashboardStats() {
         List<Product> all = productRepository.findAll();
         long totalProducts = all.size();
         long totalStockUnits = all.stream().mapToLong(p -> p.getQuantity() != null ? p.getQuantity() : 0).sum();
-        double totalValue = all.stream().mapToDouble(
-                p -> (p.getPrice() != null ? p.getPrice() : 0) * (p.getQuantity() != null ? p.getQuantity() : 0)).sum();
+        double totalValue = all.stream().mapToDouble(p -> (p.getPrice() != null ? p.getPrice() : 0) * (p.getQuantity() != null ? p.getQuantity() : 0)).sum();
         long lowStockCount = all.stream().filter(p -> "LOW_STOCK".equalsIgnoreCase(p.getStatus())).count();
         long outOfStockCount = all.stream().filter(p -> "OUT_OF_STOCK".equalsIgnoreCase(p.getStatus())).count();
         List<String> categories = productRepository.findDistinctCategories();
 
-        return new DashboardStats(totalProducts, totalStockUnits, Math.round(totalValue * 100.0) / 100.0, lowStockCount,
-                outOfStockCount, categories);
+        return new DashboardStats(totalProducts, totalStockUnits, Math.round(totalValue * 100.0) / 100.0, lowStockCount, outOfStockCount, categories);
     }
 
     public List<String> getCategories() {

@@ -3,14 +3,12 @@ package com.hackathon.backend.dto;
 public class StockUpdateRequest {
 
     private Integer quantityChanged;
-    private String reason;
 
     public StockUpdateRequest() {
     }
 
-    public StockUpdateRequest(Integer quantityChanged, String reason) {
+    public StockUpdateRequest(Integer quantityChanged) {
         this.quantityChanged = quantityChanged;
-        this.reason = reason;
     }
 
     public Integer getQuantityChanged() {
@@ -19,13 +17,5 @@ public class StockUpdateRequest {
 
     public void setQuantityChanged(Integer quantityChanged) {
         this.quantityChanged = quantityChanged;
-    }
-
-    public String getReason() {
-        return reason;
-    }
-
-    public void setReason(String reason) {
-        this.reason = reason;
     }
 }

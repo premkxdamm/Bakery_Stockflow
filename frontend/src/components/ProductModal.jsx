@@ -124,7 +124,7 @@ export default function ProductModal({ isOpen, onClose, onSave, product, categor
                 <option value="Breads" />
                 <option value="Cakes" />
                 <option value="Biscuits" />
-                <option value="Confectionery" />
+                <option value="Rolls" />
                 <option value="Pastries" />
                 {categories && categories.map((cat) => (
                   <option key={cat} value={cat} />

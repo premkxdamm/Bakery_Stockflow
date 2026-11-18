@@ -3,7 +3,6 @@ import Navbar from './components/Navbar';
 import StatCards from './components/StatCards';
 import ProductModal from './components/ProductModal';
 import StockModal from './components/StockModal';
-import TransactionModal from './components/TransactionModal';
 import { 
   getProducts, 
   getDashboardStats, 
@@ -46,14 +45,12 @@ function App() {
   const [isStockModalOpen, setIsStockModalOpen] = useState(false);
   const [stockProduct, setStockProduct] = useState(null);
 
-  const [isHistoryOpen, setIsHistoryOpen] = useState(false);
-
   const [deleteId, setDeleteId] = useState(null);
 
   // Toast Helper
   const showToast = (message, type = 'success') => {
     setToast({ message, type });
-    setTimeout(() => setToast(null), 3500);
+    setTimeout(() => setToast(null), 3000);
   };
 
   // Load Data
@@ -86,15 +83,15 @@ function App() {
       showToast(`Updated "${productData.name}" successfully!`);
     } else {
       await createProduct(productData);
-      showToast(`Added "${productData.name}" to bakery inventory!`);
+      showToast(`Added "${productData.name}" to inventory!`);
     }
     loadData();
   };
 
-  const handleAdjustStock = async (id, quantityChanged, reason) => {
-    await adjustStock(id, quantityChanged, reason);
-    const action = quantityChanged > 0 ? `added ${quantityChanged}` : `removed ${Math.abs(quantityChanged)}`;
-    showToast(`Stock updated: ${action} units.`);
+  const handleAdjustStock = async (id, quantityChanged) => {
+    await adjustStock(id, quantityChanged);
+    const action = quantityChanged > 0 ? `+${quantityChanged}` : `${quantityChanged}`;
+    showToast(`Stock updated: ${action} units`);
     loadData();
   };
 
@@ -119,7 +116,6 @@ function App() {
           setEditingProduct(null);
           setIsProductModalOpen(true);
         }}
-        onOpenHistory={() => setIsHistoryOpen(true)}
         loading={loading}
       />
 
@@ -383,12 +379,6 @@ function App() {
         product={stockProduct}
       />
 
-      {/* Stock Transaction Movement History Modal */}
-      <TransactionModal
-        isOpen={isHistoryOpen}
-        onClose={() => setIsHistoryOpen(false)}
-      />
-
       {/* Delete Confirmation Modal */}
       {deleteId && (
         <div className="modal-backdrop">
@@ -396,7 +386,7 @@ function App() {
             <div className="modal-header">
               <h3>Confirm Deletion</h3>
             </div>
-            <p style={{ margin: '1rem 0', color: '#cbd5e1' }}>
+            <p style={{ margin: '1rem 0', color: '#374151', fontSize: '0.9rem' }}>
               Are you sure you want to remove this item from the bakery inventory? This action cannot be undone.
             </p>
             <div className="modal-footer">

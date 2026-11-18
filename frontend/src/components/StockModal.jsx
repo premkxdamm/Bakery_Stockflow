@@ -4,7 +4,6 @@ import { X, ArrowUpCircle, ArrowDownCircle } from 'lucide-react';
 export default function StockModal({ isOpen, onClose, onSave, product }) {
   const [type, setType] = useState('IN'); // 'IN' or 'OUT'
   const [quantity, setQuantity] = useState('');
-  const [reason, setReason] = useState('');
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
 
@@ -18,18 +17,18 @@ export default function StockModal({ isOpen, onClose, onSave, product }) {
 
     const qtyNumber = parseInt(quantity, 10);
     if (!qtyNumber || qtyNumber <= 0) {
-      return setError('Please enter a positive quantity to adjust.');
+      return setError('Please enter a positive quantity.');
     }
 
     if (type === 'OUT' && qtyNumber > currentQty) {
-      return setError(`Cannot remove ${qtyNumber} units. Only ${currentQty} units are in stock!`);
+      return setError(`Cannot remove ${qtyNumber} units. Only ${currentQty} in stock!`);
     }
 
     const change = type === 'IN' ? qtyNumber : -qtyNumber;
 
     try {
       setSubmitting(true);
-      await onSave(product.id, change, reason);
+      await onSave(product.id, change);
       onClose();
     } catch (err) {
       setError(err.message || 'Failed to update stock');
@@ -43,8 +42,8 @@ export default function StockModal({ isOpen, onClose, onSave, product }) {
       <div className="modal-content modal-sm">
         <div className="modal-header">
           <div>
-            <h3>Adjust Bakery Stock</h3>
-            <span style={{ fontSize: '0.85rem', color: '#94a3b8' }}>
+            <h3>Adjust Stock Level</h3>
+            <span style={{ fontSize: '0.85rem', color: '#6b7280' }}>
               {product.name} ({product.sku})
             </span>
           </div>
@@ -81,24 +80,15 @@ export default function StockModal({ isOpen, onClose, onSave, product }) {
           </div>
 
           <div className="form-group">
-            <label>Units to {type === 'IN' ? 'Bake / Add' : 'Sell / Dispatch'} *</label>
+            <label>Units to {type === 'IN' ? 'Add' : 'Remove'} *</label>
             <input
               type="number"
               min="1"
               value={quantity}
               onChange={(e) => setQuantity(e.target.value)}
-              placeholder="e.g. 10"
+              placeholder="e.g. 5"
+              autoFocus
               required
-            />
-          </div>
-
-          <div className="form-group">
-            <label>Reason / Note</label>
-            <input
-              type="text"
-              value={reason}
-              onChange={(e) => setReason(e.target.value)}
-              placeholder={type === 'IN' ? 'e.g. Morning fresh baking, Afternoon batch' : 'e.g. Over-the-counter sale, Expired batch'}
             />
           </div>
 
@@ -115,4 +105,3 @@ export default function StockModal({ isOpen, onClose, onSave, product }) {
     </div>
   );
 }
-
