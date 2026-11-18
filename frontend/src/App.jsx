@@ -57,10 +57,11 @@ function App() {
         getDashboardStats(),
         getCategories(),
       ]);
-      setProducts(productsRes.data || []);
-      setStats(statsRes.data || {});
-      setCategories(catRes.data || []);
+      setProducts(Array.isArray(productsRes?.data) ? productsRes.data : []);
+      setStats(statsRes?.data && typeof statsRes.data === 'object' ? statsRes.data : {});
+      setCategories(Array.isArray(catRes?.data) ? catRes.data : []);
     } catch (err) {
+      console.error('Failed to load bakery inventory data:', err);
       showToast(err.message || 'Failed to connect to backend', 'error');
     } finally {
       setLoading(false);
@@ -100,6 +101,9 @@ function App() {
       showToast(err.message || 'Failed to delete product', 'error');
     }
   };
+
+  const safeProducts = Array.isArray(products) ? products : [];
+  const safeCategories = Array.isArray(categories) ? categories : [];
 
   return (
     <div className="app-layout">
@@ -158,7 +162,7 @@ function App() {
                 onChange={(e) => setSelectedCategory(e.target.value)}
               >
                 <option value="ALL">All Categories</option>
-                {categories.map((cat) => (
+                {safeCategories.map((cat) => (
                   <option key={cat} value={cat}>
                     {cat}
                   </option>
@@ -190,7 +194,7 @@ function App() {
           <div className="table-header">
             <h3>
               Inventory Items{' '}
-              <span className="count-tag">({products.length})</span>
+              <span className="count-tag">({safeProducts.length})</span>
             </h3>
             {(search || selectedCategory !== 'ALL' || selectedStatus !== 'ALL') && (
               <button
@@ -219,13 +223,13 @@ function App() {
                 </tr>
               </thead>
               <tbody>
-                {loading && products.length === 0 ? (
+                {loading && safeProducts.length === 0 ? (
                   <tr>
                     <td colSpan="6" className="text-center py-5">
                       Loading bakery items...
                     </td>
                   </tr>
-                ) : products.length === 0 ? (
+                ) : safeProducts.length === 0 ? (
                   <tr>
                     <td colSpan="6" className="text-center py-5">
                       <div className="empty-state">
@@ -244,7 +248,7 @@ function App() {
                     </td>
                   </tr>
                 ) : (
-                  products.map((item) => (
+                  safeProducts.map((item) => (
                     <tr key={item.id} className={item.quantity === 0 ? 'row-out-of-stock' : ''}>
                       <td>
                         <div className="product-info">
@@ -259,25 +263,25 @@ function App() {
                         <span className="category-badge">{item.category}</span>
                       </td>
                       <td>
-                        <strong className="price-tag">₹{Number(item.price).toFixed(2)}</strong>
+                        <strong className="price-tag">₹{Number(item.price || 0).toFixed(2)}</strong>
                       </td>
                       <td>
                         <div className="stock-info">
                           <div className="stock-numbers">
-                            <span className="current-qty">{item.quantity}</span>
+                            <span className="current-qty">{item.quantity ?? 0}</span>
                             <span className="min-qty">units</span>
                           </div>
                           <div className="stock-bar-bg">
                             <div
                               className={`stock-bar-fill ${
-                                item.quantity === 0
+                                (item.quantity ?? 0) === 0
                                   ? 'bar-danger'
-                                  : item.quantity <= 5
+                                  : (item.quantity ?? 0) <= 5
                                   ? 'bar-warning'
                                   : 'bar-success'
                               }`}
                               style={{
-                                width: `${Math.min(100, Math.max(10, (item.quantity / 15) * 100))}%`,
+                                width: `${Math.min(100, Math.max(10, ((item.quantity ?? 0) / 15) * 100))}%`,
                               }}
                             ></div>
                           </div>
@@ -349,7 +353,7 @@ function App() {
         onClose={() => setIsProductModalOpen(false)}
         onSave={handleSaveProduct}
         product={editingProduct}
-        categories={categories}
+        categories={safeCategories}
       />
 
       <StockModal

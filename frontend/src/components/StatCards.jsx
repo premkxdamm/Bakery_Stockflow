@@ -2,13 +2,12 @@ import React from 'react';
 import { Package, Boxes, AlertTriangle, XCircle, IndianRupee } from 'lucide-react';
 
 export default function StatCards({ stats, onFilterStatus }) {
-  const {
-    totalProducts = 0,
-    totalStockUnits = 0,
-    totalInventoryValue = 0,
-    lowStockCount = 0,
-    outOfStockCount = 0,
-  } = stats || {};
+  const safeStats = stats || {};
+  const totalProducts = Number(safeStats.totalProducts) || 0;
+  const totalStockUnits = Number(safeStats.totalStockUnits) || 0;
+  const totalInventoryValue = Number(safeStats.totalInventoryValue) || 0;
+  const lowStockCount = Number(safeStats.lowStockCount) || 0;
+  const outOfStockCount = Number(safeStats.outOfStockCount) || 0;
 
   return (
     <div className="stat-grid">
