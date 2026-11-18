@@ -288,20 +288,20 @@ function App() {
                         <div className="stock-info">
                           <div className="stock-numbers">
                             <span className="current-qty">{item.quantity}</span>
-                            <span className="min-qty">/ min: {item.minStockLevel}</span>
+                            <span className="min-qty">units</span>
                           </div>
-                          {/* Stock progress bar */}
+                          {/* Stock level bar */}
                           <div className="stock-bar-bg">
                             <div
                               className={`stock-bar-fill ${
                                 item.quantity === 0
                                   ? 'bar-danger'
-                                  : item.quantity <= item.minStockLevel
+                                  : item.quantity <= 5
                                   ? 'bar-warning'
                                   : 'bar-success'
                               }`}
                               style={{
-                                width: `${Math.min(100, Math.max(8, (item.quantity / 20) * 100))}%`,
+                                width: `${Math.min(100, Math.max(10, (item.quantity / 15) * 100))}%`,
                               }}
                             ></div>
                           </div>

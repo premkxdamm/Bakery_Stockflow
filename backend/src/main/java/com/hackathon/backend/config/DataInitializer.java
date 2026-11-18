@@ -27,8 +27,7 @@ public class DataInitializer implements CommandLineRunner {
                     "Breads",
                     40.00,
                     10,
-                    5,
-                    "Soft and freshly baked white milk bread (400g pack)"
+                    "Freshly baked white bread (400g)"
             ));
 
             productService.createProduct(new Product(
@@ -37,8 +36,7 @@ public class DataInitializer implements CommandLineRunner {
                     "Breads",
                     25.00,
                     10,
-                    5,
-                    "Traditional soft and fluffy bakery ladi pav"
+                    "Soft and fluffy bakery ladi pav"
             ));
 
             productService.createProduct(new Product(
@@ -47,7 +45,6 @@ public class DataInitializer implements CommandLineRunner {
                     "Cakes",
                     350.00,
                     10,
-                    3,
                     "Rich Dutch chocolate pastry cake (500g)"
             ));
 
@@ -57,8 +54,7 @@ public class DataInitializer implements CommandLineRunner {
                     "Biscuits",
                     60.00,
                     10,
-                    5,
-                    "Crispy handmade bakery butter cookies (250g box)"
+                    "Crispy handmade bakery butter cookies"
             ));
 
             productService.createProduct(new Product(
@@ -67,8 +63,7 @@ public class DataInitializer implements CommandLineRunner {
                     "Confectionery",
                     20.00,
                     10,
-                    4,
-                    "Crispy puff pastry horn filled with fresh sweet cream"
+                    "Crispy puff pastry filled with cream"
             ));
         }
     }

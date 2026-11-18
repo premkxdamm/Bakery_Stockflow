@@ -11,14 +11,8 @@ public class InventoryTransaction {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "product_id", nullable = false)
-    private Long productId;
-
-    @Column(name = "product_name", nullable = false)
-    private String productName;
-
-    @Column(name = "transaction_type", nullable = false, length = 30)
-    private String transactionType; // STOCK_IN, STOCK_OUT, ADJUSTMENT, INITIAL_STOCK
+    @Column(nullable = false, length = 100)
+    private String name;
 
     @Column(name = "quantity_changed", nullable = false)
     private Integer quantityChanged;
@@ -29,23 +23,17 @@ public class InventoryTransaction {
     @Column(name = "new_quantity", nullable = false)
     private Integer newQuantity;
 
-    @Column(length = 255)
-    private String reason;
-
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
     public InventoryTransaction() {
     }
 
-    public InventoryTransaction(Long productId, String productName, String transactionType, Integer quantityChanged, Integer previousQuantity, Integer newQuantity, String reason) {
-        this.productId = productId;
-        this.productName = productName;
-        this.transactionType = transactionType;
+    public InventoryTransaction(String name, Integer quantityChanged, Integer previousQuantity, Integer newQuantity) {
+        this.name = name;
         this.quantityChanged = quantityChanged;
         this.previousQuantity = previousQuantity;
         this.newQuantity = newQuantity;
-        this.reason = reason;
         this.createdAt = LocalDateTime.now();
     }
 
@@ -65,28 +53,12 @@ public class InventoryTransaction {
         this.id = id;
     }
 
-    public Long getProductId() {
-        return productId;
+    public String getName() {
+        return name;
     }
 
-    public void setProductId(Long productId) {
-        this.productId = productId;
-    }
-
-    public String getProductName() {
-        return productName;
-    }
-
-    public void setProductName(String productName) {
-        this.productName = productName;
-    }
-
-    public String getTransactionType() {
-        return transactionType;
-    }
-
-    public void setTransactionType(String transactionType) {
-        this.transactionType = transactionType;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public Integer getQuantityChanged() {
@@ -111,14 +83,6 @@ public class InventoryTransaction {
 
     public void setNewQuantity(Integer newQuantity) {
         this.newQuantity = newQuantity;
-    }
-
-    public String getReason() {
-        return reason;
-    }
-
-    public void setReason(String reason) {
-        this.reason = reason;
     }
 
     public LocalDateTime getCreatedAt() {

@@ -26,10 +26,7 @@ public class Product {
     @Column(nullable = false)
     private Integer quantity;
 
-    @Column(name = "min_stock_level", nullable = false)
-    private Integer minStockLevel = 5;
-
-    @Column(length = 500)
+    @Column(length = 255)
     private String description;
 
     @Column(nullable = false, length = 20)
@@ -41,13 +38,12 @@ public class Product {
     public Product() {
     }
 
-    public Product(String name, String sku, String category, Double price, Integer quantity, Integer minStockLevel, String description) {
+    public Product(String name, String sku, String category, Double price, Integer quantity, String description) {
         this.name = name;
         this.sku = sku;
         this.category = category;
         this.price = price;
         this.quantity = quantity;
-        this.minStockLevel = (minStockLevel != null) ? minStockLevel : 5;
         this.description = description;
         updateStatus();
     }
@@ -62,7 +58,7 @@ public class Product {
     public void updateStatus() {
         if (this.quantity == null || this.quantity <= 0) {
             this.status = "OUT_OF_STOCK";
-        } else if (this.minStockLevel != null && this.quantity <= this.minStockLevel) {
+        } else if (this.quantity <= 5) {
             this.status = "LOW_STOCK";
         } else {
             this.status = "IN_STOCK";
@@ -116,15 +112,6 @@ public class Product {
 
     public void setQuantity(Integer quantity) {
         this.quantity = quantity;
-        updateStatus();
-    }
-
-    public Integer getMinStockLevel() {
-        return minStockLevel;
-    }
-
-    public void setMinStockLevel(Integer minStockLevel) {
-        this.minStockLevel = minStockLevel;
         updateStatus();
     }
 

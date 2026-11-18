@@ -115,3 +115,4 @@ export default function StockModal({ isOpen, onClose, onSave, product }) {
     </div>
   );
 }
+

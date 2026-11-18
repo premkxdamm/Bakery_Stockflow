@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X, ArrowUpCircle, ArrowDownCircle, RefreshCw, Clock } from 'lucide-react';
+import { X, RefreshCw, Clock } from 'lucide-react';
 import { getRecentTransactions } from '../api/api';
 
 export default function TransactionModal({ isOpen, onClose }) {
@@ -34,7 +34,7 @@ export default function TransactionModal({ isOpen, onClose }) {
         <div className="modal-header">
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
             <Clock size={20} color="#818cf8" />
-            <h3>Bakery Stock Movement History</h3>
+            <h3>Stock Movement History</h3>
           </div>
           <button className="icon-btn" onClick={onClose}>
             <X size={20} />
@@ -51,18 +51,17 @@ export default function TransactionModal({ isOpen, onClose }) {
             </div>
           ) : transactions.length === 0 ? (
             <div className="empty-state">
-              <p>No stock transactions recorded yet.</p>
+              <p>No stock changes recorded yet.</p>
             </div>
           ) : (
             <div className="table-responsive">
               <table className="data-table">
                 <thead>
                   <tr>
-                    <th>Product</th>
-                    <th>Type</th>
-                    <th>Change</th>
-                    <th>Stock (Before &rarr; After)</th>
-                    <th>Reason / Notes</th>
+                    <th>Product Name</th>
+                    <th>Quantity Changed</th>
+                    <th>Previous Stock</th>
+                    <th>New Stock</th>
                     <th>Timestamp</th>
                   </tr>
                 </thead>
@@ -70,27 +69,17 @@ export default function TransactionModal({ isOpen, onClose }) {
                   {transactions.map((tx) => (
                     <tr key={tx.id}>
                       <td>
-                        <strong>{tx.productName}</strong>
-                      </td>
-                      <td>
-                        <span className={`pill ${tx.transactionType === 'STOCK_IN' || tx.transactionType === 'INITIAL_STOCK' ? 'pill-in' : 'pill-out'}`}>
-                          {tx.transactionType === 'STOCK_IN' || tx.transactionType === 'INITIAL_STOCK' ? (
-                            <ArrowUpCircle size={14} />
-                          ) : (
-                            <ArrowDownCircle size={14} />
-                          )}
-                          {tx.transactionType}
-                        </span>
+                        <strong>{tx.name}</strong>
                       </td>
                       <td>
                         <strong style={{ color: tx.quantityChanged > 0 ? '#10b981' : '#f87171' }}>
                           {tx.quantityChanged > 0 ? `+${tx.quantityChanged}` : tx.quantityChanged}
                         </strong>
                       </td>
+                      <td>{tx.previousQuantity}</td>
                       <td>
-                        {tx.previousQuantity} &rarr; <strong>{tx.newQuantity}</strong>
+                        <strong>{tx.newQuantity}</strong>
                       </td>
-                      <td>{tx.reason || 'General inventory update'}</td>
                       <td style={{ fontSize: '0.85rem', color: '#94a3b8' }}>
                         {tx.createdAt ? new Date(tx.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }) : '-'}
                       </td>

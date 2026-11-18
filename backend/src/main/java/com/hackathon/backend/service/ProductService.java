@@ -45,13 +45,10 @@ public class ProductService {
 
         // Record initial stock transaction
         InventoryTransaction tx = new InventoryTransaction(
-                saved.getId(),
                 saved.getName(),
-                "INITIAL_STOCK",
                 saved.getQuantity(),
                 0,
-                saved.getQuantity(),
-                "Initial catalog addition"
+                saved.getQuantity()
         );
         transactionRepository.save(tx);
 
@@ -70,7 +67,6 @@ public class ProductService {
         existing.setSku(details.getSku());
         existing.setCategory(details.getCategory());
         existing.setPrice(details.getPrice());
-        existing.setMinStockLevel(details.getMinStockLevel());
         existing.setDescription(details.getDescription());
 
         if (!existing.getQuantity().equals(details.getQuantity())) {
@@ -79,13 +75,10 @@ public class ProductService {
             existing.setQuantity(newQty);
 
             InventoryTransaction tx = new InventoryTransaction(
-                    existing.getId(),
                     existing.getName(),
-                    "MANUAL_ADJUSTMENT",
                     newQty - previousQty,
                     previousQty,
-                    newQty,
-                    "Product edit update"
+                    newQty
             );
             transactionRepository.save(tx);
         }
@@ -115,19 +108,11 @@ public class ProductService {
         product.updateStatus();
         Product saved = productRepository.save(product);
 
-        String type = (change > 0) ? "STOCK_IN" : "STOCK_OUT";
-        String reason = (request.getReason() != null && !request.getReason().trim().isEmpty())
-                ? request.getReason().trim()
-                : (change > 0 ? "Fresh batch baking replenishment" : "Customer order dispatch");
-
         InventoryTransaction tx = new InventoryTransaction(
-                saved.getId(),
                 saved.getName(),
-                type,
                 change,
                 previousQty,
-                newQty,
-                reason
+                newQty
         );
         transactionRepository.save(tx);
 

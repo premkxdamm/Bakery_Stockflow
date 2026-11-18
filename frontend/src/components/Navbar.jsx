@@ -15,8 +15,8 @@ export default function Navbar({ onRefresh, onOpenAdd, onOpenHistory, loading })
       </div>
 
       <div className="nav-actions">
-        <button 
-          className="btn btn-secondary" 
+        <button
+          className="btn btn-secondary"
           onClick={onOpenHistory}
           title="View recent stock transactions audit log"
         >
@@ -24,8 +24,8 @@ export default function Navbar({ onRefresh, onOpenAdd, onOpenHistory, loading })
           <span>Stock History</span>
         </button>
 
-        <button 
-          className="btn btn-secondary" 
+        <button
+          className="btn btn-secondary"
           onClick={onRefresh}
           disabled={loading}
           title="Refresh dashboard data"
@@ -34,8 +34,8 @@ export default function Navbar({ onRefresh, onOpenAdd, onOpenHistory, loading })
           <span>Refresh</span>
         </button>
 
-        <button 
-          className="btn btn-primary" 
+        <button
+          className="btn btn-primary"
           onClick={onOpenAdd}
         >
           <Plus size={16} />
@@ -45,3 +45,4 @@ export default function Navbar({ onRefresh, onOpenAdd, onOpenHistory, loading })
     </nav>
   );
 }
+

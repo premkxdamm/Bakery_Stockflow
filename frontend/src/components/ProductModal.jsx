@@ -8,7 +8,6 @@ export default function ProductModal({ isOpen, onClose, onSave, product, categor
     category: '',
     price: '',
     quantity: '',
-    minStockLevel: 5,
     description: '',
   });
 
@@ -23,7 +22,6 @@ export default function ProductModal({ isOpen, onClose, onSave, product, categor
         category: product.category || '',
         price: product.price || '',
         quantity: product.quantity ?? '',
-        minStockLevel: product.minStockLevel ?? 5,
         description: product.description || '',
       });
     } else {
@@ -33,7 +31,6 @@ export default function ProductModal({ isOpen, onClose, onSave, product, categor
         category: categories && categories.length > 0 ? categories[0] : 'Breads',
         price: '',
         quantity: 10,
-        minStockLevel: 5,
         description: '',
       });
     }
@@ -64,7 +61,6 @@ export default function ProductModal({ isOpen, onClose, onSave, product, categor
         ...formData,
         price: parseFloat(formData.price),
         quantity: parseInt(formData.quantity, 10),
-        minStockLevel: parseInt(formData.minStockLevel, 10) || 5,
       });
       onClose();
     } catch (err) {
@@ -151,31 +147,17 @@ export default function ProductModal({ isOpen, onClose, onSave, product, categor
             </div>
           </div>
 
-          <div className="form-row">
-            <div className="form-group flex-1">
-              <label>Stock Quantity (Units) *</label>
-              <input
-                type="number"
-                name="quantity"
-                min="0"
-                value={formData.quantity}
-                onChange={handleChange}
-                placeholder="10"
-                required
-              />
-            </div>
-
-            <div className="form-group flex-1">
-              <label>Low Stock Alert Level</label>
-              <input
-                type="number"
-                name="minStockLevel"
-                min="1"
-                value={formData.minStockLevel}
-                onChange={handleChange}
-                placeholder="5"
-              />
-            </div>
+          <div className="form-group">
+            <label>Stock Quantity (Units) *</label>
+            <input
+              type="number"
+              name="quantity"
+              min="0"
+              value={formData.quantity}
+              onChange={handleChange}
+              placeholder="10"
+              required
+            />
           </div>
 
           <div className="form-group">

@@ -71,3 +71,4 @@ public class DashboardStats {
         this.categories = categories;
     }
 }
+
