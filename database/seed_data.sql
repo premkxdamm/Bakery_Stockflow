@@ -1,7 +1,3 @@
--- =======================================================
--- Bakery Inventory Management System - Initial 5 Products
--- 10 quantity per product
--- =======================================================
 
 USE hackathon_db;
 

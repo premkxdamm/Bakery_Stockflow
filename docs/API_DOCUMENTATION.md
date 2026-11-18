@@ -3,10 +3,6 @@
 ## Base URL
 `http://localhost:8080/api`
 
-## Interactive Swagger Documentation
-Once backend is running, open:
-`http://localhost:8080/swagger-ui.html`
-
 ---
 
 ## Starter Endpoints

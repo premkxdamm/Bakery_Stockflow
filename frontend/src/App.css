@@ -1,27 +1,15 @@
-/* =========================================================
-   Bakery Inventory Management System
-   Theme: White, Light Grey (Grey 86) & Cyan-Green Tint
-   Clean, Humanized Student Project Look
-   ========================================================= */
-
 :root {
-  --bg-main: #f4f5f7;        /* Soft neutral light grey */
-  --bg-card: #ffffff;        /* Pure white cards */
-  --bg-card-hover: #f0fdfa;  /* Subtle cyan-green hover tint */
-  --border-color: #e5e7eb;   /* Clean grey border */
+  --bg-main: #f4f5f7;
+  --bg-card: #ffffff;
+  --bg-card-hover: #f0fdfa;
+  --border-color: #e5e7eb;
   --border-strong: #d1d5db;
-  
-  /* Cyan-Green Tint Accent */
-  --primary: #0d9488;        /* Cyan-green / Teal */
+  --primary: #0d9488;
   --primary-hover: #0f766e;
-  --primary-tint: #f0fdfa;   /* Very soft cyan-green */
+  --primary-tint: #f0fdfa;
   --primary-border: #99f6e4;
-  
-  /* Typography */
-  --text-main: #1f2937;      /* Dark grey text */
-  --text-muted: #6b7280;     /* Muted secondary text */
-  
-  /* Status Colors */
+  --text-main: #1f2937;
+  --text-muted: #6b7280;
   --success: #16a34a;
   --warning: #d97706;
   --danger: #dc2626;
@@ -45,7 +33,6 @@ body {
   flex-direction: column;
 }
 
-/* --- Top Navigation Header --- */
 .navbar {
   display: flex;
   align-items: center;
@@ -94,7 +81,6 @@ body {
   gap: 0.75rem;
 }
 
-/* --- Buttons --- */
 .btn {
   display: inline-flex;
   align-items: center;
@@ -156,7 +142,6 @@ body {
   text-decoration: underline;
 }
 
-/* --- Main Layout --- */
 .main-content {
   flex: 1;
   max-width: 1200px;
@@ -182,7 +167,6 @@ body {
   font-size: 0.95rem;
 }
 
-/* --- Stat Metric Cards --- */
 .stat-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -229,7 +213,7 @@ body {
 }
 
 .bg-blue { background: #f0f9ff; }
-.bg-indigo { background: #f0fdfa; } /* Cyan tint */
+.bg-indigo { background: #f0fdfa; }
 .bg-emerald { background: #ecfdf5; }
 .bg-amber { background: #fffbeb; }
 .bg-rose { background: #fef2f2; }
@@ -262,7 +246,6 @@ body {
 .text-amber { color: #d97706; }
 .text-rose { color: #dc2626; }
 
-/* --- Search & Filter Bar --- */
 .filter-card {
   background: var(--bg-card);
   border: 1px solid var(--border-color);
@@ -378,7 +361,6 @@ body {
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
 }
 
-/* --- Table Card --- */
 .table-card {
   background: var(--bg-card);
   border: 1px solid var(--border-color);
@@ -524,7 +506,6 @@ body {
 .bar-warning { background: #d97706; }
 .bar-danger { background: #dc2626; }
 
-/* --- Badges --- */
 .badge-status {
   display: inline-flex;
   align-items: center;
@@ -559,7 +540,6 @@ body {
 }
 .status-out-of-stock .dot { background: #dc2626; }
 
-/* --- Action Buttons --- */
 .action-buttons {
   display: flex;
   align-items: center;
@@ -600,7 +580,6 @@ body {
   border-color: #dc2626;
 }
 
-/* --- Modals --- */
 .modal-backdrop {
   position: fixed;
   inset: 0;
@@ -715,7 +694,6 @@ body {
   background: #f8fafc;
 }
 
-/* Stock Toggle in Modal */
 .stock-toggle {
   display: flex;
   gap: 0.5rem;
@@ -760,7 +738,6 @@ body {
   color: #334155;
 }
 
-/* Stock History Audit Table */
 .pill {
   display: inline-flex;
   align-items: center;
@@ -774,7 +751,6 @@ body {
 .pill-in { background: #dcfce7; color: #166534; }
 .pill-out { background: #fee2e2; color: #991b1b; }
 
-/* --- Toast Notifications --- */
 .toast-notification {
   position: fixed;
   bottom: 2rem;

@@ -26,19 +26,16 @@ import {
 import './App.css';
 
 function App() {
-  // State
   const [products, setProducts] = useState([]);
   const [stats, setStats] = useState({});
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(false);
   const [toast, setToast] = useState(null);
 
-  // Filters
   const [search, setSearch] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('ALL');
   const [selectedStatus, setSelectedStatus] = useState('ALL');
 
-  // Modals
   const [isProductModalOpen, setIsProductModalOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState(null);
 
@@ -47,13 +44,11 @@ function App() {
 
   const [deleteId, setDeleteId] = useState(null);
 
-  // Toast Helper
   const showToast = (message, type = 'success') => {
     setToast({ message, type });
     setTimeout(() => setToast(null), 3000);
   };
 
-  // Load Data
   const loadData = useCallback(async () => {
     setLoading(true);
     try {
@@ -76,7 +71,6 @@ function App() {
     loadData();
   }, [loadData]);
 
-  // Handlers
   const handleSaveProduct = async (productData) => {
     if (editingProduct) {
       await updateProduct(editingProduct.id, productData);
@@ -109,7 +103,6 @@ function App() {
 
   return (
     <div className="app-layout">
-      {/* Top Navigation */}
       <Navbar
         onRefresh={loadData}
         onOpenAdd={() => {
@@ -120,7 +113,6 @@ function App() {
       />
 
       <main className="main-content">
-        {/* Toast Alert */}
         {toast && (
           <div className={`toast-notification toast-${toast.type}`}>
             {toast.type === 'success' ? <CheckCircle size={18} /> : <AlertTriangle size={18} />}
@@ -128,7 +120,6 @@ function App() {
           </div>
         )}
 
-        {/* Dashboard Title & Introduction */}
         <section className="hero-section">
           <div>
             <h2 className="hero-title">Bakery Items Inventory</h2>
@@ -138,13 +129,11 @@ function App() {
           </div>
         </section>
 
-        {/* 5 Real-Time Summary Metric Cards */}
         <StatCards
           stats={stats}
           onFilterStatus={(status) => setSelectedStatus(status)}
         />
 
-        {/* Search & Filter Toolbar */}
         <section className="filter-card">
           <div className="search-box">
             <Search size={18} className="search-icon" />
@@ -162,7 +151,6 @@ function App() {
           </div>
 
           <div className="filter-controls">
-            {/* Category Dropdown */}
             <div className="select-wrapper">
               <Filter size={16} className="select-icon" />
               <select
@@ -178,7 +166,6 @@ function App() {
               </select>
             </div>
 
-            {/* Status Filter Pills */}
             <div className="status-pills">
               {['ALL', 'IN_STOCK', 'LOW_STOCK', 'OUT_OF_STOCK'].map((status) => (
                 <button
@@ -199,7 +186,6 @@ function App() {
           </div>
         </section>
 
-        {/* Inventory Products Table */}
         <section className="table-card">
           <div className="table-header">
             <h3>
@@ -281,7 +267,6 @@ function App() {
                             <span className="current-qty">{item.quantity}</span>
                             <span className="min-qty">units</span>
                           </div>
-                          {/* Stock level bar */}
                           <div className="stock-bar-bg">
                             <div
                               className={`stock-bar-fill ${
@@ -318,7 +303,6 @@ function App() {
                       </td>
                       <td>
                         <div className="action-buttons">
-                          {/* Quick Stock Adjustment */}
                           <button
                             className="action-btn action-stock"
                             title="Quick Stock In / Stock Out"
@@ -331,7 +315,6 @@ function App() {
                             <span>Stock</span>
                           </button>
 
-                          {/* Edit */}
                           <button
                             className="action-btn action-edit"
                             title="Edit Product Details"
@@ -343,7 +326,6 @@ function App() {
                             <Edit2 size={15} />
                           </button>
 
-                          {/* Delete */}
                           <button
                             className="action-btn action-delete"
                             title="Delete Product"
@@ -362,7 +344,6 @@ function App() {
         </section>
       </main>
 
-      {/* Add / Edit Product Modal */}
       <ProductModal
         isOpen={isProductModalOpen}
         onClose={() => setIsProductModalOpen(false)}
@@ -371,7 +352,6 @@ function App() {
         categories={categories}
       />
 
-      {/* Quick Stock In / Out Adjustment Modal */}
       <StockModal
         isOpen={isStockModalOpen}
         onClose={() => setIsStockModalOpen(false)}
@@ -379,7 +359,6 @@ function App() {
         product={stockProduct}
       />
 
-      {/* Delete Confirmation Modal */}
       {deleteId && (
         <div className="modal-backdrop">
           <div className="modal-content modal-sm">

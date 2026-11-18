@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { X, ArrowUpCircle, ArrowDownCircle } from 'lucide-react';
 
 export default function StockModal({ isOpen, onClose, onSave, product }) {
-  const [type, setType] = useState('IN'); // 'IN' or 'OUT'
+  const [type, setType] = useState('IN');
   const [quantity, setQuantity] = useState('');
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);

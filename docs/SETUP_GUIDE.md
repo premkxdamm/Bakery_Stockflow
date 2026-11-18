@@ -26,8 +26,6 @@ This guide contains everything you need to run and extend your project during th
    ```
 3. Test the endpoints:
    - **Health Check**: [http://localhost:8080/api/health](http://localhost:8080/api/health)
-   - **Swagger UI**: [http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html)
-   - **OpenAPI JSON**: [http://localhost:8080/v3/api-docs](http://localhost:8080/v3/api-docs)
 
 ---
 

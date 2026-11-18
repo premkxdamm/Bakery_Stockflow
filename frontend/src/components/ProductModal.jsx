@@ -48,7 +48,6 @@ export default function ProductModal({ isOpen, onClose, onSave, product, categor
     e.preventDefault();
     setError('');
 
-    // Validations
     if (!formData.name.trim()) return setError('Product name is required.');
     if (!formData.sku.trim()) return setError('SKU code is required.');
     if (!formData.category.trim()) return setError('Category is required.');

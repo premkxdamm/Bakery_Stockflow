@@ -30,7 +30,7 @@ public class Product {
     private String description;
 
     @Column(nullable = false, length = 20)
-    private String status; // IN_STOCK, LOW_STOCK, OUT_OF_STOCK
+    private String status;
 
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
@@ -65,7 +65,6 @@ public class Product {
         }
     }
 
-    // Getters and Setters
     public Long getId() {
         return id;
     }

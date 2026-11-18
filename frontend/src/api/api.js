@@ -18,13 +18,10 @@ api.interceptors.response.use(
   }
 );
 
-// --- Backend Health Check ---
 export const checkBackendHealth = () => api.get('/health');
 
-// --- Dashboard Stats ---
 export const getDashboardStats = () => api.get('/dashboard/stats');
 
-// --- Products CRUD & Filters ---
 export const getProducts = (search = '', category = '', status = '') => {
   const params = {};
   if (search && search.trim() !== '') params.search = search.trim();
@@ -41,14 +38,12 @@ export const updateProduct = (id, productData) => api.put(`/products/${id}`, pro
 
 export const deleteProduct = (id) => api.delete(`/products/${id}`);
 
-// --- Quick Stock Movement ---
 export const adjustStock = (id, quantityChanged) => {
   return api.post(`/products/${id}/stock`, {
     quantityChanged: Number(quantityChanged),
   });
 };
 
-// --- Categories ---
 export const getCategories = () => api.get('/products/categories');
 
 export default api;
