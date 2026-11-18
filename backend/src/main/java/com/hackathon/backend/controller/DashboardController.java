@@ -22,4 +22,3 @@ public class DashboardController {
         return ResponseEntity.ok(productService.getDashboardStats());
     }
 }
-

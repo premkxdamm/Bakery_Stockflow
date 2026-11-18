@@ -24,4 +24,3 @@ public class TransactionController {
         return ResponseEntity.ok(transactionRepository.findTop20ByOrderByCreatedAtDesc());
     }
 }
-

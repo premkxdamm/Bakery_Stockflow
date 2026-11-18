@@ -19,16 +19,15 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     List<String> findDistinctCategories();
 
     @Query("SELECT p FROM Product p WHERE " +
-           "(:search IS NULL OR LOWER(p.name) LIKE LOWER(CONCAT('%', :search, '%')) OR LOWER(p.sku) LIKE LOWER(CONCAT('%', :search, '%'))) AND " +
-           "(:category IS NULL OR LOWER(p.category) = LOWER(:category)) AND " +
-           "(:status IS NULL OR p.status = :status) " +
-           "ORDER BY p.updatedAt DESC")
+            "(:search IS NULL OR LOWER(p.name) LIKE LOWER(CONCAT('%', :search, '%')) OR LOWER(p.sku) LIKE LOWER(CONCAT('%', :search, '%'))) AND "
+            +
+            "(:category IS NULL OR LOWER(p.category) = LOWER(:category)) AND " +
+            "(:status IS NULL OR p.status = :status) " +
+            "ORDER BY p.updatedAt DESC")
     List<Product> searchAndFilter(
             @Param("search") String search,
             @Param("category") String category,
-            @Param("status") String status
-    );
+            @Param("status") String status);
 
     long countByStatus(String status);
 }
-

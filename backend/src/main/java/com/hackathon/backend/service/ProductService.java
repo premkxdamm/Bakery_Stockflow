@@ -24,8 +24,12 @@ public class ProductService {
 
     public List<Product> getAllProducts(String search, String category, String status) {
         String cleanSearch = (search != null && !search.trim().isEmpty()) ? search.trim() : null;
-        String cleanCategory = (category != null && !category.trim().isEmpty() && !category.equalsIgnoreCase("ALL")) ? category.trim() : null;
-        String cleanStatus = (status != null && !status.trim().isEmpty() && !status.equalsIgnoreCase("ALL")) ? status.trim().toUpperCase() : null;
+        String cleanCategory = (category != null && !category.trim().isEmpty() && !category.equalsIgnoreCase("ALL"))
+                ? category.trim()
+                : null;
+        String cleanStatus = (status != null && !status.trim().isEmpty() && !status.equalsIgnoreCase("ALL"))
+                ? status.trim().toUpperCase()
+                : null;
 
         return productRepository.searchAndFilter(cleanSearch, cleanCategory, cleanStatus);
     }
@@ -48,8 +52,7 @@ public class ProductService {
                 saved.getName(),
                 saved.getQuantity(),
                 0,
-                saved.getQuantity()
-        );
+                saved.getQuantity());
         transactionRepository.save(tx);
 
         return saved;
@@ -78,8 +81,7 @@ public class ProductService {
                     existing.getName(),
                     newQty - previousQty,
                     previousQty,
-                    newQty
-            );
+                    newQty);
             transactionRepository.save(tx);
         }
 
@@ -112,8 +114,7 @@ public class ProductService {
                 saved.getName(),
                 change,
                 previousQty,
-                newQty
-        );
+                newQty);
         transactionRepository.save(tx);
 
         return saved;
@@ -123,12 +124,14 @@ public class ProductService {
         List<Product> all = productRepository.findAll();
         long totalProducts = all.size();
         long totalStockUnits = all.stream().mapToLong(p -> p.getQuantity() != null ? p.getQuantity() : 0).sum();
-        double totalValue = all.stream().mapToDouble(p -> (p.getPrice() != null ? p.getPrice() : 0) * (p.getQuantity() != null ? p.getQuantity() : 0)).sum();
+        double totalValue = all.stream().mapToDouble(
+                p -> (p.getPrice() != null ? p.getPrice() : 0) * (p.getQuantity() != null ? p.getQuantity() : 0)).sum();
         long lowStockCount = all.stream().filter(p -> "LOW_STOCK".equalsIgnoreCase(p.getStatus())).count();
         long outOfStockCount = all.stream().filter(p -> "OUT_OF_STOCK".equalsIgnoreCase(p.getStatus())).count();
         List<String> categories = productRepository.findDistinctCategories();
 
-        return new DashboardStats(totalProducts, totalStockUnits, Math.round(totalValue * 100.0) / 100.0, lowStockCount, outOfStockCount, categories);
+        return new DashboardStats(totalProducts, totalStockUnits, Math.round(totalValue * 100.0) / 100.0, lowStockCount,
+                outOfStockCount, categories);
     }
 
     public List<String> getCategories() {

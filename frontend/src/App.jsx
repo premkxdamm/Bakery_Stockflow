@@ -22,8 +22,7 @@ import {
   AlertTriangle, 
   CheckCircle, 
   Plus, 
-  ArrowUpDown,
-  Utensils
+  ArrowUpDown
 } from 'lucide-react';
 import './App.css';
 
@@ -140,10 +139,6 @@ function App() {
             <p className="hero-subtitle">
               Monitor daily stock, adjust quantities, and manage bakery items with real-time alerts.
             </p>
-          </div>
-          <div className="capacity-badge">
-            <Utensils size={16} />
-            <span>Handling Capacity: 50 Products (10 Units/Item Standard)</span>
           </div>
         </section>
 

@@ -14,7 +14,8 @@ public class DashboardStats {
     public DashboardStats() {
     }
 
-    public DashboardStats(long totalProducts, long totalStockUnits, double totalInventoryValue, long lowStockCount, long outOfStockCount, List<String> categories) {
+    public DashboardStats(long totalProducts, long totalStockUnits, double totalInventoryValue, long lowStockCount,
+            long outOfStockCount, List<String> categories) {
         this.totalProducts = totalProducts;
         this.totalStockUnits = totalStockUnits;
         this.totalInventoryValue = totalInventoryValue;
@@ -71,4 +72,3 @@ public class DashboardStats {
         this.categories = categories;
     }
 }
-

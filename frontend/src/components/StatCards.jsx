@@ -15,19 +15,19 @@ export default function StatCards({ stats, onFilterStatus }) {
       {/* Total Products */}
       <div className="stat-card" onClick={() => onFilterStatus('ALL')}>
         <div className="stat-icon-wrapper bg-blue">
-          <Package size={22} color="#38bdf8" />
+          <Package size={22} color="#0284c7" />
         </div>
         <div className="stat-content">
           <span className="stat-label">Total Bakery Items</span>
           <span className="stat-value">{totalProducts}</span>
-          <span className="stat-helper">Capacity: up to 50 items</span>
+          <span className="stat-helper">Active items</span>
         </div>
       </div>
 
       {/* Total Stock Units */}
       <div className="stat-card">
         <div className="stat-icon-wrapper bg-indigo">
-          <Boxes size={22} color="#818cf8" />
+          <Boxes size={22} color="#0d9488" />
         </div>
         <div className="stat-content">
           <span className="stat-label">Total Stock Units</span>
@@ -39,7 +39,7 @@ export default function StatCards({ stats, onFilterStatus }) {
       {/* Total Inventory Value */}
       <div className="stat-card">
         <div className="stat-icon-wrapper bg-emerald">
-          <IndianRupee size={22} color="#34d399" />
+          <IndianRupee size={22} color="#16a34a" />
         </div>
         <div className="stat-content">
           <span className="stat-label">Inventory Valuation</span>
@@ -55,12 +55,12 @@ export default function StatCards({ stats, onFilterStatus }) {
         title="Click to filter low stock items"
       >
         <div className="stat-icon-wrapper bg-amber">
-          <AlertTriangle size={22} color="#fbbf24" />
+          <AlertTriangle size={22} color="#d97706" />
         </div>
         <div className="stat-content">
           <span className="stat-label">Low Stock Alerts</span>
           <span className="stat-value text-amber">{lowStockCount}</span>
-          <span className="stat-helper">Below minimum level</span>
+          <span className="stat-helper">Stock &le; 5 units</span>
         </div>
       </div>
 
@@ -71,15 +71,14 @@ export default function StatCards({ stats, onFilterStatus }) {
         title="Click to filter out of stock items"
       >
         <div className="stat-icon-wrapper bg-rose">
-          <XCircle size={22} color="#f87171" />
+          <XCircle size={22} color="#dc2626" />
         </div>
         <div className="stat-content">
           <span className="stat-label">Out of Stock</span>
           <span className="stat-value text-rose">{outOfStockCount}</span>
-          <span className="stat-helper">Needs fresh baking</span>
+          <span className="stat-helper">0 units left</span>
         </div>
       </div>
     </div>
   );
 }
-

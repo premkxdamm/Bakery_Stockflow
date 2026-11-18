@@ -29,4 +29,3 @@ public class StockUpdateRequest {
         this.reason = reason;
     }
 }
-
