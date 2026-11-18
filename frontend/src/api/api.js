@@ -10,29 +10,48 @@ const api = axios.create({
   },
 });
 
-// Request Interceptor
-api.interceptors.request.use(
-  (config) => {
-    // Inject auth tokens if available
-    const token = localStorage.getItem('auth_token');
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
-  },
-  (error) => Promise.reject(error)
-);
-
-// Response Interceptor
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    console.error('API Error:', error.response?.data || error.message);
-    return Promise.reject(error);
+    const errorMsg = error.response?.data?.message || error.message || 'An error occurred while connecting to server';
+    return Promise.reject(new Error(errorMsg));
   }
 );
 
-// Starter Endpoints
+// --- Backend Health Check ---
 export const checkBackendHealth = () => api.get('/health');
+
+// --- Dashboard Stats ---
+export const getDashboardStats = () => api.get('/dashboard/stats');
+
+// --- Products CRUD & Filters ---
+export const getProducts = (search = '', category = '', status = '') => {
+  const params = {};
+  if (search && search.trim() !== '') params.search = search.trim();
+  if (category && category !== 'ALL') params.category = category;
+  if (status && status !== 'ALL') params.status = status;
+  return api.get('/products', { params });
+};
+
+export const getProductById = (id) => api.get(`/products/${id}`);
+
+export const createProduct = (productData) => api.post('/products', productData);
+
+export const updateProduct = (id, productData) => api.put(`/products/${id}`, productData);
+
+export const deleteProduct = (id) => api.delete(`/products/${id}`);
+
+// --- Quick Stock Movement ---
+export const adjustStock = (id, quantityChanged, reason) => {
+  return api.post(`/products/${id}/stock`, {
+    quantityChanged: Number(quantityChanged),
+    reason: reason || (Number(quantityChanged) > 0 ? 'Stock replenishment' : 'Stock dispatch'),
+  });
+};
+
+// --- Categories & Transactions ---
+export const getCategories = () => api.get('/products/categories');
+
+export const getRecentTransactions = () => api.get('/transactions');
 
 export default api;

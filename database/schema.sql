@@ -1,33 +1,44 @@
 -- =======================================================
--- 7M Hackathon - Database Schema
+-- Bakery Inventory Management System - Database Schema
 -- Database: hackathon_db
 -- =======================================================
 
 CREATE DATABASE IF NOT EXISTS hackathon_db;
 USE hackathon_db;
 
+-- Drop tables if you want a clean restart (optional):
+-- DROP TABLE IF EXISTS inventory_transactions;
+-- DROP TABLE IF EXISTS products;
+
 -- -------------------------------------------------------
--- Users Table
+-- Products Table (Capacity: up to 50+ bakery items)
 -- -------------------------------------------------------
-CREATE TABLE IF NOT EXISTS users (
+CREATE TABLE IF NOT EXISTS products (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
-    email VARCHAR(150) NOT NULL UNIQUE,
-    password VARCHAR(255) NOT NULL,
-    role VARCHAR(50) DEFAULT 'USER',
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    sku VARCHAR(50) NOT NULL UNIQUE,
+    category VARCHAR(50) NOT NULL,
+    price DOUBLE NOT NULL,
+    quantity INT NOT NULL,
+    min_stock_level INT NOT NULL DEFAULT 5,
+    description VARCHAR(500),
+    status VARCHAR(20) NOT NULL, -- IN_STOCK, LOW_STOCK, OUT_OF_STOCK
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
 -- -------------------------------------------------------
--- Sample Hackathon Domain Table (Customizable)
+-- Inventory Transactions Table (Stock Audit Log)
 -- -------------------------------------------------------
-CREATE TABLE IF NOT EXISTS items (
+CREATE TABLE IF NOT EXISTS inventory_transactions (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    title VARCHAR(200) NOT NULL,
-    description TEXT,
-    status VARCHAR(50) DEFAULT 'ACTIVE',
-    user_id BIGINT,
+    product_id BIGINT NOT NULL,
+    product_name VARCHAR(100) NOT NULL,
+    transaction_type VARCHAR(30) NOT NULL, -- STOCK_IN, STOCK_OUT, ADJUSTMENT, INITIAL_STOCK
+    quantity_changed INT NOT NULL,
+    previous_quantity INT NOT NULL,
+    new_quantity INT NOT NULL,
+    reason VARCHAR(255),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL
+    INDEX idx_product_id (product_id),
+    INDEX idx_created_at (created_at)
 );

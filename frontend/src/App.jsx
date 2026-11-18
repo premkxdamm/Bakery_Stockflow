@@ -1,122 +1,420 @@
-import { useState, useEffect } from 'react';
-import { checkBackendHealth } from './api/api';
-import { Server, Code, Database, CheckCircle, AlertCircle, RefreshCw, Layers } from 'lucide-react';
+import React, { useState, useEffect, useCallback } from 'react';
+import Navbar from './components/Navbar';
+import StatCards from './components/StatCards';
+import ProductModal from './components/ProductModal';
+import StockModal from './components/StockModal';
+import TransactionModal from './components/TransactionModal';
+import { 
+  getProducts, 
+  getDashboardStats, 
+  createProduct, 
+  updateProduct, 
+  deleteProduct, 
+  adjustStock, 
+  getCategories 
+} from './api/api';
+import { 
+  Search, 
+  Filter, 
+  Edit2, 
+  Trash2, 
+  Layers, 
+  AlertTriangle, 
+  CheckCircle, 
+  Plus, 
+  ArrowUpDown,
+  Utensils
+} from 'lucide-react';
 import './App.css';
 
 function App() {
-  const [backendStatus, setBackendStatus] = useState('checking');
-  const [backendMessage, setBackendMessage] = useState('');
-  const [backendTime, setBackendTime] = useState(null);
+  // State
+  const [products, setProducts] = useState([]);
+  const [stats, setStats] = useState({});
+  const [categories, setCategories] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [toast, setToast] = useState(null);
 
-  const verifyBackend = async () => {
-    setBackendStatus('checking');
+  // Filters
+  const [search, setSearch] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('ALL');
+  const [selectedStatus, setSelectedStatus] = useState('ALL');
+
+  // Modals
+  const [isProductModalOpen, setIsProductModalOpen] = useState(false);
+  const [editingProduct, setEditingProduct] = useState(null);
+
+  const [isStockModalOpen, setIsStockModalOpen] = useState(false);
+  const [stockProduct, setStockProduct] = useState(null);
+
+  const [isHistoryOpen, setIsHistoryOpen] = useState(false);
+
+  const [deleteId, setDeleteId] = useState(null);
+
+  // Toast Helper
+  const showToast = (message, type = 'success') => {
+    setToast({ message, type });
+    setTimeout(() => setToast(null), 3500);
+  };
+
+  // Load Data
+  const loadData = useCallback(async () => {
+    setLoading(true);
     try {
-      const res = await checkBackendHealth();
-      setBackendStatus('online');
-      setBackendMessage(res.data.message || 'Connected to Spring Boot API');
-      setBackendTime(res.data.timestamp);
+      const [productsRes, statsRes, catRes] = await Promise.all([
+        getProducts(search, selectedCategory, selectedStatus),
+        getDashboardStats(),
+        getCategories(),
+      ]);
+      setProducts(productsRes.data || []);
+      setStats(statsRes.data || {});
+      setCategories(catRes.data || []);
     } catch (err) {
-      setBackendStatus('offline');
-      setBackendMessage('Backend offline (Run: .\\mvnw.cmd spring-boot:run)');
+      showToast(err.message || 'Failed to connect to backend', 'error');
+    } finally {
+      setLoading(false);
+    }
+  }, [search, selectedCategory, selectedStatus]);
+
+  useEffect(() => {
+    loadData();
+  }, [loadData]);
+
+  // Handlers
+  const handleSaveProduct = async (productData) => {
+    if (editingProduct) {
+      await updateProduct(editingProduct.id, productData);
+      showToast(`Updated "${productData.name}" successfully!`);
+    } else {
+      await createProduct(productData);
+      showToast(`Added "${productData.name}" to bakery inventory!`);
+    }
+    loadData();
+  };
+
+  const handleAdjustStock = async (id, quantityChanged, reason) => {
+    await adjustStock(id, quantityChanged, reason);
+    const action = quantityChanged > 0 ? `added ${quantityChanged}` : `removed ${Math.abs(quantityChanged)}`;
+    showToast(`Stock updated: ${action} units.`);
+    loadData();
+  };
+
+  const confirmDelete = async () => {
+    if (!deleteId) return;
+    try {
+      await deleteProduct(deleteId);
+      showToast('Product deleted from inventory.');
+      setDeleteId(null);
+      loadData();
+    } catch (err) {
+      showToast(err.message || 'Failed to delete product', 'error');
     }
   };
 
-  useEffect(() => {
-    verifyBackend();
-  }, []);
-
   return (
-    <div className="container">
-      <header className="header">
-        <span className="badge">🚀 7M Hackathon Workspace</span>
-        <h1 className="title">Ready to Build</h1>
-        <p className="subtitle">
-          Your full-stack environment is pre-configured and ready for development.
-        </p>
-      </header>
+    <div className="app-layout">
+      {/* Top Navigation */}
+      <Navbar
+        onRefresh={loadData}
+        onOpenAdd={() => {
+          setEditingProduct(null);
+          setIsProductModalOpen(true);
+        }}
+        onOpenHistory={() => setIsHistoryOpen(true)}
+        loading={loading}
+      />
 
-      <div className="grid">
-        {/* Frontend Card */}
-        <div className="card">
-          <div className="card-header">
-            <Code size={24} color="#60a5fa" />
-            <h2 className="card-title">Frontend (React + Vite)</h2>
+      <main className="main-content">
+        {/* Toast Alert */}
+        {toast && (
+          <div className={`toast-notification toast-${toast.type}`}>
+            {toast.type === 'success' ? <CheckCircle size={18} /> : <AlertTriangle size={18} />}
+            <span>{toast.message}</span>
           </div>
-          <p className="card-desc">
-            React 19 with Vite, Axios, React Router DOM, and Lucide icons.
-          </p>
-          <div className="status-box">
-            <span>Dev Server</span>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <span className="status-dot status-online"></span>
-              <strong style={{ color: '#10b981' }}>Active (Port 5173)</strong>
-            </div>
-          </div>
-          <div className="code-box">npm run dev</div>
-        </div>
+        )}
 
-        {/* Backend Card */}
-        <div className="card">
-          <div className="card-header">
-            <Server size={24} color="#a855f7" />
-            <h2 className="card-title">Backend (Spring Boot)</h2>
-          </div>
-          <p className="card-desc">
-            Java 21 REST API with Maven wrapper, JPA, Swagger UI, and CORS enabled.
-          </p>
-          <div className="status-box">
-            <span>API Status</span>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <span className={`status-dot ${backendStatus === 'online' ? 'status-online' : 'status-offline'}`}></span>
-              <strong style={{ color: backendStatus === 'online' ? '#10b981' : '#f59e0b' }}>
-                {backendStatus === 'online' ? 'Connected (Port 8080)' : 'Offline / Waiting'}
-              </strong>
-            </div>
-          </div>
-          {backendTime && (
-            <p style={{ fontSize: '0.8rem', color: '#94a3b8', marginTop: '0.5rem' }}>
-              Timestamp: {backendTime}
+        {/* Dashboard Title & Introduction */}
+        <section className="hero-section">
+          <div>
+            <h2 className="hero-title">Bakery Items Inventory</h2>
+            <p className="hero-subtitle">
+              Monitor daily stock, adjust quantities, and manage bakery items with real-time alerts.
             </p>
-          )}
-          <button className="btn" onClick={verifyBackend}>
-            <RefreshCw size={16} /> Test Backend Connection
-          </button>
-        </div>
-
-        {/* Database Card */}
-        <div className="card">
-          <div className="card-header">
-            <Database size={24} color="#ec4899" />
-            <h2 className="card-title">Database & Docs</h2>
           </div>
-          <p className="card-desc">
-            Pre-configured MySQL properties and schema scripts ready to load.
-          </p>
-          <div className="status-box">
-            <span>Database</span>
-            <strong>MySQL (hackathon_db)</strong>
+          <div className="capacity-badge">
+            <Utensils size={16} />
+            <span>Handling Capacity: 50 Products (10 Units/Item Standard)</span>
           </div>
-          <div className="code-box">database/schema.sql</div>
-        </div>
-      </div>
+        </section>
 
-      <div className="card" style={{ marginTop: '2rem' }}>
-        <div className="card-header">
-          <Layers size={22} color="#818cf8" />
-          <h3 style={{ fontSize: '1.1rem' }}>Next Steps for Development</h3>
+        {/* 5 Real-Time Summary Metric Cards */}
+        <StatCards
+          stats={stats}
+          onFilterStatus={(status) => setSelectedStatus(status)}
+        />
+
+        {/* Search & Filter Toolbar */}
+        <section className="filter-card">
+          <div className="search-box">
+            <Search size={18} className="search-icon" />
+            <input
+              type="text"
+              placeholder="Search by name (Bread, Pav, Cake...) or SKU..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
+            {search && (
+              <button className="clear-search" onClick={() => setSearch('')}>
+                &times;
+              </button>
+            )}
+          </div>
+
+          <div className="filter-controls">
+            {/* Category Dropdown */}
+            <div className="select-wrapper">
+              <Filter size={16} className="select-icon" />
+              <select
+                value={selectedCategory}
+                onChange={(e) => setSelectedCategory(e.target.value)}
+              >
+                <option value="ALL">All Categories</option>
+                {categories.map((cat) => (
+                  <option key={cat} value={cat}>
+                    {cat}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* Status Filter Pills */}
+            <div className="status-pills">
+              {['ALL', 'IN_STOCK', 'LOW_STOCK', 'OUT_OF_STOCK'].map((status) => (
+                <button
+                  key={status}
+                  className={`status-pill-btn ${selectedStatus === status ? 'active' : ''}`}
+                  onClick={() => setSelectedStatus(status)}
+                >
+                  {status === 'ALL'
+                    ? 'All'
+                    : status === 'IN_STOCK'
+                    ? 'In Stock'
+                    : status === 'LOW_STOCK'
+                    ? 'Low Stock'
+                    : 'Out of Stock'}
+                </button>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Inventory Products Table */}
+        <section className="table-card">
+          <div className="table-header">
+            <h3>
+              Inventory Items{' '}
+              <span className="count-tag">({products.length})</span>
+            </h3>
+            {(search || selectedCategory !== 'ALL' || selectedStatus !== 'ALL') && (
+              <button
+                className="btn-link"
+                onClick={() => {
+                  setSearch('');
+                  setSelectedCategory('ALL');
+                  setSelectedStatus('ALL');
+                }}
+              >
+                Reset Filters
+              </button>
+            )}
+          </div>
+
+          <div className="table-responsive">
+            <table className="data-table">
+              <thead>
+                <tr>
+                  <th>Product Details</th>
+                  <th>Category</th>
+                  <th>Unit Price</th>
+                  <th>Stock Quantity</th>
+                  <th>Status</th>
+                  <th style={{ textAlign: 'right' }}>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {loading && products.length === 0 ? (
+                  <tr>
+                    <td colSpan="6" className="text-center py-5">
+                      Loading bakery items...
+                    </td>
+                  </tr>
+                ) : products.length === 0 ? (
+                  <tr>
+                    <td colSpan="6" className="text-center py-5">
+                      <div className="empty-state">
+                        <Layers size={36} color="#64748b" />
+                        <p>No products found matching your filter criteria.</p>
+                        <button
+                          className="btn btn-primary mt-2"
+                          onClick={() => {
+                            setEditingProduct(null);
+                            setIsProductModalOpen(true);
+                          }}
+                        >
+                          <Plus size={16} /> Add First Product
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ) : (
+                  products.map((item) => (
+                    <tr key={item.id} className={item.quantity === 0 ? 'row-out-of-stock' : ''}>
+                      <td>
+                        <div className="product-info">
+                          <span className="product-name">{item.name}</span>
+                          <span className="product-sku">{item.sku}</span>
+                          {item.description && (
+                            <span className="product-desc">{item.description}</span>
+                          )}
+                        </div>
+                      </td>
+                      <td>
+                        <span className="category-badge">{item.category}</span>
+                      </td>
+                      <td>
+                        <strong className="price-tag">₹{Number(item.price).toFixed(2)}</strong>
+                      </td>
+                      <td>
+                        <div className="stock-info">
+                          <div className="stock-numbers">
+                            <span className="current-qty">{item.quantity}</span>
+                            <span className="min-qty">/ min: {item.minStockLevel}</span>
+                          </div>
+                          {/* Stock progress bar */}
+                          <div className="stock-bar-bg">
+                            <div
+                              className={`stock-bar-fill ${
+                                item.quantity === 0
+                                  ? 'bar-danger'
+                                  : item.quantity <= item.minStockLevel
+                                  ? 'bar-warning'
+                                  : 'bar-success'
+                              }`}
+                              style={{
+                                width: `${Math.min(100, Math.max(8, (item.quantity / 20) * 100))}%`,
+                              }}
+                            ></div>
+                          </div>
+                        </div>
+                      </td>
+                      <td>
+                        <span
+                          className={`badge-status ${
+                            item.status === 'IN_STOCK'
+                              ? 'status-in-stock'
+                              : item.status === 'LOW_STOCK'
+                              ? 'status-low-stock'
+                              : 'status-out-of-stock'
+                          }`}
+                        >
+                          <span className="dot"></span>
+                          {item.status === 'IN_STOCK'
+                            ? 'In Stock'
+                            : item.status === 'LOW_STOCK'
+                            ? 'Low Stock Alert'
+                            : 'Out of Stock'}
+                        </span>
+                      </td>
+                      <td>
+                        <div className="action-buttons">
+                          {/* Quick Stock Adjustment */}
+                          <button
+                            className="action-btn action-stock"
+                            title="Quick Stock In / Stock Out"
+                            onClick={() => {
+                              setStockProduct(item);
+                              setIsStockModalOpen(true);
+                            }}
+                          >
+                            <ArrowUpDown size={15} />
+                            <span>Stock</span>
+                          </button>
+
+                          {/* Edit */}
+                          <button
+                            className="action-btn action-edit"
+                            title="Edit Product Details"
+                            onClick={() => {
+                              setEditingProduct(item);
+                              setIsProductModalOpen(true);
+                            }}
+                          >
+                            <Edit2 size={15} />
+                          </button>
+
+                          {/* Delete */}
+                          <button
+                            className="action-btn action-delete"
+                            title="Delete Product"
+                            onClick={() => setDeleteId(item.id)}
+                          >
+                            <Trash2 size={15} />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </main>
+
+      {/* Add / Edit Product Modal */}
+      <ProductModal
+        isOpen={isProductModalOpen}
+        onClose={() => setIsProductModalOpen(false)}
+        onSave={handleSaveProduct}
+        product={editingProduct}
+        categories={categories}
+      />
+
+      {/* Quick Stock In / Out Adjustment Modal */}
+      <StockModal
+        isOpen={isStockModalOpen}
+        onClose={() => setIsStockModalOpen(false)}
+        onSave={handleAdjustStock}
+        product={stockProduct}
+      />
+
+      {/* Stock Transaction Movement History Modal */}
+      <TransactionModal
+        isOpen={isHistoryOpen}
+        onClose={() => setIsHistoryOpen(false)}
+      />
+
+      {/* Delete Confirmation Modal */}
+      {deleteId && (
+        <div className="modal-backdrop">
+          <div className="modal-content modal-sm">
+            <div className="modal-header">
+              <h3>Confirm Deletion</h3>
+            </div>
+            <p style={{ margin: '1rem 0', color: '#cbd5e1' }}>
+              Are you sure you want to remove this item from the bakery inventory? This action cannot be undone.
+            </p>
+            <div className="modal-footer">
+              <button className="btn btn-secondary" onClick={() => setDeleteId(null)}>
+                Cancel
+              </button>
+              <button className="btn btn-danger" onClick={confirmDelete}>
+                Delete Item
+              </button>
+            </div>
+          </div>
         </div>
-        <ul style={{ paddingLeft: '1.5rem', color: '#94a3b8', lineHeight: '1.8' }}>
-          <li>
-            <strong style={{ color: '#f8fafc' }}>Backend:</strong> Add your entities in <code>backend/src/main/java/com/hackathon/backend/model</code> and controllers in <code>controller</code>.
-          </li>
-          <li>
-            <strong style={{ color: '#f8fafc' }}>Frontend:</strong> Add UI views in <code>frontend/src/pages</code> and API endpoints in <code>frontend/src/api/api.js</code>.
-          </li>
-          <li>
-            <strong style={{ color: '#f8fafc' }}>Swagger Docs:</strong> Open <code>http://localhost:8080/swagger-ui.html</code> once backend is started to test APIs interactively.
-          </li>
-        </ul>
-      </div>
+      )}
     </div>
   );
 }
