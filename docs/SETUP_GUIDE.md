@@ -6,7 +6,7 @@ This guide contains everything you need to run and extend your project during th
 
 ## 🛠️ Prerequisites Installed
 
-- **Java JDK**: Version 21 (`C:\Program Files\Java\jdk-21.0.11`)
+- **Java JDK**: Version 21 (LTS)
 - **Maven**: Handled via included Maven Wrapper (`mvnw.cmd`)
 - **Node.js**: Version 24+ (`v24.22.0`)
 - **npm**: Version 11+ (`11.0.0`)
@@ -25,7 +25,7 @@ This guide contains everything you need to run and extend your project during th
    .\mvnw.cmd spring-boot:run
    ```
 3. Test the endpoints:
-   - **Health Check**: [http://localhost:8080/api/health](http://localhost:8080/api/health)
+   - **Health Check**: [http://localhost:8081/api/health](http://localhost:8081/api/health)
 
 ---
 
